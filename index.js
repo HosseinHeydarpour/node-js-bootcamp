@@ -1,5 +1,6 @@
 const fs = require("fs");
 const http = require("http"); // This gives us networking capabilities
+const url = require("url");
 
 // Blocking, synchronous way
 
@@ -39,10 +40,41 @@ const http = require("http"); // This gives us networking capabilities
 // ************************************************************
 // * Creating a Simple Web Server
 // ************************************************************
+// const server = http.createServer((req, res) => {
+//   // console.log(req);
+//   // Sending back a very simple response for a request
+//   res.end("REQUEST WAS SUCCESSFULL");
+// });
+
+// // Params: Port, Host: deafults to local host
+// server.listen(8000, "127.0.0.1", () => {
+//   console.log("Server ready and listening to requests on port 8000");
+// });
+
+// ************************************************************
+// * Routing
+// ************************************************************
+
 const server = http.createServer((req, res) => {
-  // console.log(req);
-  // Sending back a very simple response for a request
-  res.end("REQUEST WAS SUCCESSFULL");
+  console.log(req.url);
+
+  const pathName = req.url;
+
+  // If the path is / or overview
+  if (pathName === "/overview" || pathName === "/") {
+    // Sending back a very simple response for a request
+
+    res.end("This is the overview");
+  } else if (pathName === "/product") {
+    res.end("This is the product");
+  } else {
+    // We MUST always set these like status code, header and etc BEFORE sending the response
+    res.writeHead(404, {
+      "content-type": "text/html",
+      "my-own-header": "hello-world",
+    });
+    res.end("<h1>PAGE NOT FOUND!</h1>");
+  }
 });
 
 // Params: Port, Host: deafults to local host
