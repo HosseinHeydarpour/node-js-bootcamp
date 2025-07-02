@@ -55,6 +55,39 @@ const url = require("url");
 // * Routing
 // ************************************************************
 
+// const server = http.createServer((req, res) => {
+//   console.log(req.url);
+
+//   const pathName = req.url;
+
+//   // If the path is / or overview
+//   if (pathName === "/overview" || pathName === "/") {
+//     // Sending back a very simple response for a request
+
+//     res.end("This is the overview");
+//   } else if (pathName === "/product") {
+//     res.end("This is the product");
+//   } else {
+//     // We MUST always set these like status code, header and etc BEFORE sending the response
+//     res.writeHead(404, {
+//       "content-type": "text/html",
+//       "my-own-header": "hello-world",
+//     });
+//     res.end("<h1>PAGE NOT FOUND!</h1>");
+//   }
+// });
+
+// // Params: Port, Host: deafults to local host
+// server.listen(8000, "127.0.0.1", () => {
+//   console.log("Server ready and listening to requests on port 8000");
+// });
+
+// ************************************************************
+// * Building a (Very) Simple API
+// ************************************************************
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObject = JSON.parse(data);
+
 const server = http.createServer((req, res) => {
   console.log(req.url);
 
@@ -67,6 +100,21 @@ const server = http.createServer((req, res) => {
     res.end("This is the overview");
   } else if (pathName === "/product") {
     res.end("This is the product");
+  } else if (pathName === "/api") {
+    // This is inefficient
+    // fs.readFile(`${__dirname}/dev-data/data.json`, "utf-8", (err, data) => {
+    //   const productData = JSON.parse(data);
+    //   console.log(productData);
+    //   res.writeHead(200, {
+    //     "content-type": "application/json",
+    //   });
+    //   res.end(data);
+    // });
+
+    res.writeHead(200, {
+      "content-type": "application/json",
+    });
+    res.end(data);
   } else {
     // We MUST always set these like status code, header and etc BEFORE sending the response
     res.writeHead(404, {
