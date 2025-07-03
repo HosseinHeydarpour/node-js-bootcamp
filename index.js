@@ -1,6 +1,12 @@
+// Core modules
 const fs = require("fs");
 const http = require("http"); // This gives us networking capabilities
 const url = require("url");
+
+// Third party modules
+const slugify = require("slugify");
+
+// Custom modules
 // . means the current location of the module
 const replaceTemplate = require("./modules/replaceTemplate");
 
@@ -238,6 +244,19 @@ const replaceTemplate = require("./modules/replaceTemplate");
 
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
 const dataObject = JSON.parse(data);
+
+const slugs = dataObject.map((el) => {
+  return slugify(el.productName, {
+    lower: true,
+  });
+});
+
+// console.log(
+//   slugify("Fresh Avacados", {
+//     lower: true,
+//   })
+// );
+// console.log(slugs);
 
 // Because we are in the top level code and it only gets executed once we use SYNC version
 const tempOverview = fs.readFileSync(
