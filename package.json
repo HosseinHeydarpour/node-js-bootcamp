@@ -1,0 +1,23 @@
+{
+  "name": "starter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HosseinHeydarpour/node-js-bootcamp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HosseinHeydarpour/node-js-bootcamp/issues"
+  },
+  "homepage": "https://github.com/HosseinHeydarpour/node-js-bootcamp#readme",
+  "description": "",
+  "dependencies": {
+    "superagent": "^10.2.1"
+  }
+}
