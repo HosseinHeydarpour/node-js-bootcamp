@@ -48,11 +48,17 @@ const getProdPic = async () => {
   try {
     const productId = await readFilePro(`${__dirname}/product.txt`);
     console.log('Product ID:', productId);
-    const response = await superagent.get(
-      `https://fakestoreapi.com/products/${productId}`
-    );
-    console.log(response.body.image);
-    await writeFilePro(`${__dirname}/product-image.txt`, response.body.image);
+    const res1Pro = superagent.get(`https://fakestoreapi.com/products/1`);
+    const res2Pro = superagent.get(`https://fakestoreapi.com/products/2`);
+    const res3Pro = superagent.get(`https://fakestoreapi.com/products/3`);
+    const all = await Promise.all([res1Pro, res2Pro, res3Pro]);
+
+    const imgs = all.map((el) => el.body.image);
+
+    console.log(imgs);
+
+    await writeFilePro(`${__dirname}/product-image.txt`, imgs.join('\n'));
+
     console.log('Product image saved to file');
   } catch (error) {
     console.error('Error fetching product image:', error);
