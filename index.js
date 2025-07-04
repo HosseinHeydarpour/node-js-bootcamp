@@ -56,9 +56,36 @@ const getProdPic = async () => {
     console.log('Product image saved to file');
   } catch (error) {
     console.error('Error fetching product image:', error);
+    // 2️⃣ We throw the error to be handled in the calling function
+    throw error;
   } finally {
     console.log('Finished fetching product image');
   }
+
+  // 1️⃣ This will return a promise even if we have error so we have to use throw
+  return '2: Ready 😂';
 };
 
-getProdPic();
+//
+// console.log('1: Will get product image');
+// getProdPic()
+//   .then((res) => {
+//     console.log(res);
+//     console.log('3: Finished getting product image');
+//   })
+//   .catch((error) => {
+//     // 3️⃣ We use the error thrown in the async function
+//     console.error('Error:', error);
+//   });
+
+(async () => {
+  try {
+    console.log('1: Will get product image');
+    const res = await getProdPic();
+    console.log(res);
+    console.log('3: Finished getting product image');
+  } catch (error) {
+    // 3️⃣ We use the error thrown in the async function
+    console.error('Error:', error);
+  }
+})();
