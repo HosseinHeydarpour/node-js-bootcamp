@@ -25,18 +25,40 @@ const writeFilePro = (file, data) => {
 };
 
 // This is a flat chain of promises
-readFilePro(`${__dirname}/product.txt`)
-  .then((res) => {
-    console.log('Product ID:', res);
-    return superagent.get(`https://fakestoreapi.com/products/${res}`);
-  })
-  .then((response) => {
+// readFilePro(`${__dirname}/product.txt`)
+//   .then((res) => {
+//     console.log('Product ID:', res);
+//     return superagent.get(`https://fakestoreapi.com/products/${res}`);
+//   })
+//   .then((response) => {
+//     console.log(response.body.image);
+//     return writeFilePro(`${__dirname}/product-image.txt`, response.body.image);
+//   })
+//   .then(() => {
+//     console.log('Product image saved to file');
+//   })
+//   .catch((err) => {
+//     console.error('Error reading product file:', err);
+//   });
+
+// We can only use await in an async function
+// Async function always returns a promise
+// Syntactic sugar for promises
+const getProdPic = async () => {
+  try {
+    const productId = await readFilePro(`${__dirname}/product.txt`);
+    console.log('Product ID:', productId);
+    const response = await superagent.get(
+      `https://fakestoreapi.com/products/${productId}`
+    );
     console.log(response.body.image);
-    return writeFilePro(`${__dirname}/product-image.txt`, response.body.image);
-  })
-  .then(() => {
+    await writeFilePro(`${__dirname}/product-image.txt`, response.body.image);
     console.log('Product image saved to file');
-  })
-  .catch((err) => {
-    console.error('Error reading product file:', err);
-  });
+  } catch (error) {
+    console.error('Error fetching product image:', error);
+  } finally {
+    console.log('Finished fetching product image');
+  }
+};
+
+getProdPic();
