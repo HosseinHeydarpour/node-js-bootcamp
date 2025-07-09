@@ -34,6 +34,32 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
+// add ? to make id optional
+// app.get('/api/v1/tours/:id?', (req, res) => {
+app.get('/api/v1/tours/:id', (req, res) => {
+  console.log(req.params);
+  // Find method: returns an array which only contains an element with this condition is true
+  const id = req.params.id * 1; // convert string to number
+  const tour = tours.find((tour) => tour.id === id);
+
+  // Two solutions
+  // if (id > tours.length) {
+  if (!tour) {
+    // Use return to exit
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
+});
+
 app.post('/api/v1/tours', (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
