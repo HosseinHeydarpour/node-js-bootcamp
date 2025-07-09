@@ -6,24 +6,14 @@ const app = express();
 // Middleware: if we disable this, req.body will be undefined
 app.use(express.json());
 
-// app.get('/', (req, res) => {
-//   // res.status(200).send('Hello From the server!');
-//   res.status(200).json({
-//     message: 'Hello From the server!',
-//     app: 'Natours',
-//   });
-// });
-
-// app.post('/', (req, res) => {
-//   res.status(200).send('You can post to this endpoint');
-// });
-
+// ======================
+// * Callbacks
 // ======================
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
-app.get('/api/v1/tours', (req, res) => {
+const getAllTours = (req, res) => {
   res.status(200).json({
     // JSEND format
     status: 'success',
@@ -32,11 +22,8 @@ app.get('/api/v1/tours', (req, res) => {
       tours,
     },
   });
-});
-
-// add ? to make id optional
-// app.get('/api/v1/tours/:id?', (req, res) => {
-app.get('/api/v1/tours/:id', (req, res) => {
+};
+const getTour = (req, res) => {
   console.log(req.params);
   // Find method: returns an array which only contains an element with this condition is true
   const id = req.params.id * 1; // convert string to number
@@ -58,9 +45,9 @@ app.get('/api/v1/tours/:id', (req, res) => {
       tour,
     },
   });
-});
+};
 
-app.post('/api/v1/tours', (req, res) => {
+const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
@@ -84,10 +71,9 @@ app.post('/api/v1/tours', (req, res) => {
       });
     }
   );
-});
+};
 
-// Patch is better than
-app.patch('/api/v1/tours/:id', (req, res) => {
+const updateTour = (req, res) => {
   const id = req.params.id * 1;
   if (id > tours.length) {
     // Use return to exit
@@ -102,9 +88,9 @@ app.patch('/api/v1/tours/:id', (req, res) => {
       tour: '<Updated Tour here...>',
     },
   });
-});
+};
 
-app.delete('/api/v1/tours/:id', (req, res) => {
+const deleteTour = (req, res) => {
   const id = req.params.id * 1;
   if (id > tours.length) {
     // Use return to exit
@@ -119,7 +105,37 @@ app.delete('/api/v1/tours/:id', (req, res) => {
     // We send to show the resource was deleted and does not exist anymore
     data: null,
   });
-});
+};
+
+// ======================
+// * Callbacks
+// ======================
+
+// app.get('/api/v1/tours', getAllTours);
+
+// add ? to make id optional
+// app.get('/api/v1/tours/:id?', (req, res) => {
+// Get a tour
+// app.get('/api/v1/tours/:id?', getTour);
+
+// // Create a tour
+// app.post('/api/v1/tours', createTour);
+
+// // Patch is better than
+// app.patch('/api/v1/tours/:id', updateTour);
+
+// // Delete a tour
+// app.delete('/api/v1/tours/:id', deleteTour);
+
+// Get all tours and create
+app.route('/api/v1/tours').get(getAllTours).post(createTour);
+
+// Get a tour, update it, and delete it
+app
+  .route('/api/v1/tours/:id')
+  .get(getTour)
+  .patch(updateTour)
+  .delete(deleteTour);
 
 const port = 3000;
 app.listen(port, () => {
