@@ -104,6 +104,23 @@ app.patch('/api/v1/tours/:id', (req, res) => {
   });
 });
 
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id * 1;
+  if (id > tours.length) {
+    // Use return to exit
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  // 204 means no content
+  res.status(204).json({
+    status: 'success',
+    // We send to show the resource was deleted and does not exist anymore
+    data: null,
+  });
+});
+
 const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}...`);
