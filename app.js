@@ -1,7 +1,15 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
+
+// =========================
+// ****Middlewares****
+// =========================
+
+// Options: dev, common, short, tiny
+app.use(morgan('dev'));
 
 // Middleware: if we disable this, req.body will be undefined
 app.use(express.json());
@@ -20,9 +28,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// ======================
-// **** Callbacks ****
-// ======================
+// =========================
+// **** Route Handlers ****
+// =========================
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
@@ -144,6 +152,10 @@ const deleteTour = (req, res) => {
 // app.delete('/api/v1/tours/:id', deleteTour);
 
 // Get all tours and create
+
+// ************
+//  Routes
+// ************
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
 app.use((req, res, next) => {
