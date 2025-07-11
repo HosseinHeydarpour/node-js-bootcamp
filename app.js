@@ -6,23 +6,40 @@ const app = express();
 // Middleware: if we disable this, req.body will be undefined
 app.use(express.json());
 
+// In this way express knows that we are defining a middleware
+//  If we dont call next, the request will be stuck
+//
+app.use((req, res, next) => {
+  console.log('Hello From the middleware!');
+  next();
+});
+
+app.use((req, res, next) => {
+  // Middleware to add request time
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 // ======================
-// * Callbacks
+// **** Callbacks ****
 // ======================
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 const getAllTours = (req, res) => {
+  console.log(req.requestTime);
   res.status(200).json({
     // JSEND format
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours,
     },
   });
 };
+
 const getTour = (req, res) => {
   console.log(req.params);
   // Find method: returns an array which only contains an element with this condition is true
@@ -46,7 +63,6 @@ const getTour = (req, res) => {
     },
   });
 };
-
 const createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
@@ -130,12 +146,23 @@ const deleteTour = (req, res) => {
 // Get all tours and create
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 
+app.use((req, res, next) => {
+  console.log('Hello From the  middleware before get single tour !');
+  next();
+});
+
 // Get a tour, update it, and delete it
 app
   .route('/api/v1/tours/:id')
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// This wont log anything to console because route middleware ends the request with res.send or res.json | Cycle is already finished
+app.use((req, res, next) => {
+  console.log('Hello From the End middleware!');
+  next();
+});
 
 const port = 3000;
 app.listen(port, () => {
