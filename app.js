@@ -192,33 +192,27 @@ const deleteUser = (req, res) => {
 // ************
 //  Routes
 // ************
-app.route('/api/v1/tours').get(getAllTours).post(createTour);
+// We created a sub app
 
-app.use((req, res, next) => {
-  console.log('Hello From the  middleware before get single tour !');
-  next();
-});
+const tourRouter = express.Router();
+const userRouter = express.Router();
 
+// *****************
+//  Tour Router
+// *****************
+tourRouter.route('/').get(getAllTours).post(createTour);
 // Get a tour, update it, and delete it
-app
-  .route('/api/v1/tours/:id')
-  .get(getTour)
-  .patch(updateTour)
-  .delete(deleteTour);
+tourRouter.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
-// This wont log anything to console because route middleware ends the request with res.send or res.json | Cycle is already finished
-app.use((req, res, next) => {
-  console.log('Hello From the End middleware!');
-  next();
-});
+// *****************
+//  User Router
+// *****************
+userRouter.route('/').get(getAllUsers).post(createUser);
 
-app.route('/api/v1/users').get(getAllUsers).post(createUser);
+userRouter.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
-app
-  .route('/api/v1/users/:id')
-  .get(getUser)
-  .patch(updateUser)
-  .delete(deleteUser);
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
 
 const port = 3000;
 app.listen(port, () => {
