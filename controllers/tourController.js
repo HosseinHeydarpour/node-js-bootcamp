@@ -4,6 +4,17 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkID = (req, res, next, val) => {
+  if (val > tours.length) {
+    // This return is soo important
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Invalid ID',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
@@ -22,16 +33,6 @@ exports.getTour = (req, res) => {
   // Find method: returns an array which only contains an element with this condition is true
   const id = req.params.id * 1; // convert string to number
   const tour = tours.find((tour) => tour.id === id);
-
-  // Two solutions
-  // if (id > tours.length) {
-  if (!tour) {
-    // Use return to exit
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
 
   res.status(200).json({
     status: 'success',
@@ -69,13 +70,7 @@ exports.createTour = (req, res) => {
 
 exports.updateTour = (req, res) => {
   const id = req.params.id * 1;
-  if (id > tours.length) {
-    // Use return to exit
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
+
   res.status(200).json({
     status: 'success',
     data: {
@@ -86,13 +81,7 @@ exports.updateTour = (req, res) => {
 
 exports.deleteTour = (req, res) => {
   const id = req.params.id * 1;
-  if (id > tours.length) {
-    // Use return to exit
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID',
-    });
-  }
+
   // 204 means no content
   res.status(204).json({
     status: 'success',
