@@ -1,10 +1,9 @@
 const express = require('express');
 
-const morgan = require('morgan');
-
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
+const morgan = require('morgan');
 const app = express();
 
 // =========================
@@ -16,6 +15,8 @@ app.use(morgan('dev'));
 
 // Middleware: if we disable this, req.body will be undefined
 app.use(express.json());
+
+app.use(express.static(`${__dirname}/public`));
 
 // In this way express knows that we are defining a middleware
 //  If we dont call next, the request will be stuck
