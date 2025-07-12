@@ -15,6 +15,17 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
+// Create checkbody middleware function
+exports.checkBody = (req, res, next) => {
+  if (!req.body.name || !req.body.price) {
+    return res.status(400).json({
+      status: 'fail',
+      message: 'Missing name or price',
+    });
+  }
+  next(); // Move to the next middleware
+};
+
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
@@ -48,11 +59,11 @@ exports.createTour = (req, res) => {
 
   tours.push(newTour);
   fs.writeFile(
-    `${__dirname}/dev-data/data/tours-simple.json`,
+    `${__dirname}/../dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
     (err) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           status: 'error',
           message: 'Could not save tour',
         });
