@@ -39,6 +39,22 @@ const toursSchema = new mongoose.Schema({
 
 const Tour = mongoose.model('Tour', toursSchema);
 
+const testTour = new Tour({
+  name: 'The Forest 2 Camper',
+  rating: 4.7,
+  price: 1000,
+});
+
+testTour
+  .save()
+  .then((doc) => {
+    console.log('Tour saved successfully');
+    console.log(doc);
+  })
+  .catch((err) => {
+    console.error('Error saving tour:', err);
+  });
+
 // console.log(app.get('env')); // We get development by default
 // console.log(process.env);
 
