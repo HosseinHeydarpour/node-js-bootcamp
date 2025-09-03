@@ -11,7 +11,7 @@ const app = express();
 // =========================
 
 // Options: dev, common, short, tiny
-console.log(process.env.NODE_ENV);
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
@@ -24,10 +24,10 @@ app.use(express.static(`${__dirname}/public`));
 // In this way express knows that we are defining a middleware
 //  If we dont call next, the request will be stuck
 //
-app.use((req, res, next) => {
-  console.log('Hello From the middleware!');
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log('Hello From the middleware!');
+//   next();
+// });
 
 app.use((req, res, next) => {
   // Middleware to add request time
