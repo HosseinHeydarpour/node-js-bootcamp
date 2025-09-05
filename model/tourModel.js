@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 // Trim only works for String and trims white space
 const toursSchema = new mongoose.Schema(
@@ -8,6 +9,9 @@ const toursSchema = new mongoose.Schema(
       required: [true, 'The tour must have a name'],
       unique: true,
       trim: true,
+    },
+    slug: {
+      type: String,
     },
     duration: {
       type: Number,
@@ -72,6 +76,24 @@ const toursSchema = new mongoose.Schema(
 toursSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
+
+// DOCUMENT MIDDLEWARE: runs before the .save() and create() not .insertMany()
+toursSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// pre save hook
+// toursSchema.pre('save', function (next) {
+//   console.log('Will save document');
+//   next();
+// });
+
+// post save hook
+// toursSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', toursSchema);
 
