@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-
+const validator = require('validator');
 // Trim only works for String and trims white space
 const toursSchema = new mongoose.Schema(
   {
@@ -12,6 +12,7 @@ const toursSchema = new mongoose.Schema(
       // These two validators are only available on strings
       maxLength: [40, 'A tour name must have less or equal than 40 chars'],
       minLength: [10, 'A tour name must have more than 10 chars'],
+      // validate: [validator.isAlpha, 'A tour name con only contain letters'],
     },
     slug: {
       type: String,
@@ -46,8 +47,16 @@ const toursSchema = new mongoose.Schema(
       type: Number,
       required: [true, 'The tour must have a price'],
     },
-    priceDiscount: Number,
-
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function (val) {
+          // This will not work on update just only when creating one NEW DOCUMENT creation
+          return val < this.price; // 100 < 200 --> true -> no error | 250 < 200 --> false --> validatio error
+        },
+        message: 'Discount price ({VALUE}) should be below the regular price',
+      },
+    },
     summary: {
       type: String,
       trim: true,
