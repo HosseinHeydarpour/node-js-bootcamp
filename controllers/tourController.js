@@ -76,6 +76,7 @@ exports.updateTour = async (req, res) => {
   try {
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
+      // If we do not set this mongoose will accepts less than 10 or more than 40 char titles
       runValidators: true,
     });
     res.status(200).json({
