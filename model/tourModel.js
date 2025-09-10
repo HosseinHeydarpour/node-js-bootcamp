@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const validator = require('validator');
+// const validator = require('validator');
 // Trim only works for String and trims white space
 const toursSchema = new mongoose.Schema(
   {
