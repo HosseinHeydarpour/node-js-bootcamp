@@ -34,6 +34,7 @@ app.use(express.static(`${__dirname}/public`));
 app.use((req, res, next) => {
   // Middleware to add request time
   req.requestTime = new Date().toISOString();
+  // console.log(x); throw error only when request happens
   next();
 });
 
