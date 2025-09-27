@@ -4,6 +4,8 @@ const router = express.Router();
 
 const tourController = require('../controllers/tourController');
 
+const authController = require('../controllers/authController');
+
 // This is only specified in the tour routes
 // router.param('id', tourController.checkID);
 router
@@ -15,7 +17,7 @@ router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
 
 router
   .route('/')
-  .get(tourController.getAllTours)
+  .get(authController.protect, tourController.getAllTours)
   .post(tourController.createTour);
 // Get a tour, update it, and delete it
 router

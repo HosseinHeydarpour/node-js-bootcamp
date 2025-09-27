@@ -62,3 +62,26 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+exports.protect = catchAsync(async (req, res, next) => {
+  let token;
+
+  //  1) Getting token and checking if it exists
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  // console.log(token);
+
+  if (!token) return next(new AppError('Please log in to get access', 401));
+
+  // 2) Validate token (Verification)
+
+  // 3) if verification is ok chack if user exists
+
+  // 4) Check if user changed passwords after the jwt was issued
+
+  next();
+});
