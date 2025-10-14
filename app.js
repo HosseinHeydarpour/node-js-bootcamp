@@ -1,6 +1,7 @@
 const express = require('express');
 
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError');
@@ -17,6 +18,17 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// =============================
+// **** Global Middlewares ****
+// =============================
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  message: 'Too many requests from this IP, please try again later!',
+});
+//  Only effect on API Route
+app.use('/api', limiter);
 
 // Middleware: if we disable this, req.body will be undefined
 app.use(express.json());
