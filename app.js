@@ -2,6 +2,8 @@ const express = require('express');
 
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError');
@@ -13,15 +15,20 @@ const app = express();
 // **** Middlewares ****
 // =========================
 
-// Options: dev, common, short, tiny
+// =============================
+// **** Global Middlewares ****
+// =============================
 
+// Options: dev, common, short, tiny
+// Development logging
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// =============================
-// **** Global Middlewares ****
-// =============================
+// Put it before all other middleware
+app.use(helmet());
+
+// Limits requests from the same IP
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -31,23 +38,19 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 // Middleware: if we disable this, req.body will be undefined
-app.use(express.json());
+app.use(
+  express.json({
+    limit: '10kb', // Limit request body size
+  }),
+);
 
+// Serving static files
 app.use(express.static(`${__dirname}/public`));
 
-// In this way express knows that we are defining a middleware
-//  If we dont call next, the request will be stuck
-//
-// app.use((req, res, next) => {
-//   console.log('Hello From the middleware!');
-//   next();
-// });
-
+// Middleware to add request time and for test
 app.use((req, res, next) => {
-  // Middleware to add request time
   req.requestTime = new Date().toISOString();
-  // console.log(x); throw error only when request happens
-  // console.log(req.headers);
+
   next();
 });
 
