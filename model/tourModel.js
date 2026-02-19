@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const User = require('./userModel');
 // const validator = require('validator');
 // Trim only works for String and trims white space
 const toursSchema = new mongoose.Schema(
@@ -107,6 +108,8 @@ const toursSchema = new mongoose.Schema(
         day: Number,
       },
     ],
+
+    guides: Array,
   },
   {
     toJSON: {
@@ -126,6 +129,13 @@ toursSchema.virtual('durationWeeks').get(function () {
 // DOCUMENT MIDDLEWARE: runs before the .save() and create() not .insertMany()
 toursSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// Only works for creating not updating every time a use changes email or role this takes a lot of work
+toursSchema.pre('save', async function (next) {
+  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+  this.guides = await Promise.all(guidesPromises);
   next();
 });
 
