@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const User = require('./userModel');
+// const User = require('./userModel');
 // const validator = require('validator');
 // Trim only works for String and trims white space
 const toursSchema = new mongoose.Schema(
@@ -109,7 +109,8 @@ const toursSchema = new mongoose.Schema(
       },
     ],
 
-    guides: Array,
+    // guides: Array,
+    guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {
     toJSON: {
@@ -133,11 +134,11 @@ toursSchema.pre('save', function (next) {
 });
 
 // Only works for creating not updating every time a use changes email or role this takes a lot of work
-toursSchema.pre('save', async function (next) {
-  const guidesPromises = this.guides.map(async (id) => await User.findById(id));
-  this.guides = await Promise.all(guidesPromises);
-  next();
-});
+// toursSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
 
 // pre save hook
 // toursSchema.pre('save', function (next) {
