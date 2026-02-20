@@ -166,17 +166,24 @@ toursSchema.pre(/^find/, function (next) {
   this.start = Date.now();
   next();
 });
-
-toursSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
-  // console.log(docs);
-  next();
-});
-
 // AGGREGATE MIDDLEWARE
 // Remove secret tour from aggeragate
 toursSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  next();
+});
+
+toursSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+
+  next();
+});
+
+toursSchema.post(/^find/, function (docs, next) {
+  console.log(`Query took ${Date.now() - this.start} milliseconds!`);
   next();
 });
 

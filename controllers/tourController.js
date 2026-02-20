@@ -30,6 +30,9 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTour = catchAsync(async (req, res, next) => {
+  // This populates on only queries
+  // const tour = await Tour.findById(req.params.id).populate('guides');
+  // Populate is a fundemental tool in mongoose  - populate might effect performance do not use it in huge applications because it creates two queries
   const tour = await Tour.findById(req.params.id);
 
   // Tour.findOne({_id: req.params.id}) --> this would work exactly as same sa line above
