@@ -73,6 +73,7 @@ userSchema.pre('save', function (next) {
   next();
 });
 
+// To not include delted users
 userSchema.pre(/^find/, function (next) {
   this.find({ active: { $ne: false } });
   next();
