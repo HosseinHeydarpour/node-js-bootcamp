@@ -6,7 +6,7 @@ const userController = require('../controllers/userController');
 
 const authController = require('../controllers/authController');
 
-const reviewController = require('../controllers/reviewController');
+// const reviewController = require('../controllers/reviewController');
 
 router.route('/signup').post(authController.signup);
 router.route('/login').post(authController.login);

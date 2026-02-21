@@ -1,12 +1,29 @@
 const express = require('express');
 
-const router = express.Router();
-
 const tourController = require('../controllers/tourController');
 
 const authController = require('../controllers/authController');
 
-const reviewController = require('../controllers/reviewController');
+// const reviewController = require('../controllers/reviewController');
+
+const reviewRouter = require('./reviewRoutes');
+
+const router = express.Router();
+
+// POST /tour/234324sad/reviews
+// GET /tour/234324sad/reviews
+// GET /tour/234324sad/reviews/34098reviewid
+
+// This is a bit messy
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview,
+//   );
+
+router.use('/:tourId/reviews', reviewRouter);
 
 // This is only specified in the tour routes
 // router.param('id', tourController.checkID);
@@ -30,18 +47,6 @@ router
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),
     tourController.deleteTour,
-  );
-
-// POST /tour/234324sad/reviews
-// GET /tour/234324sad/reviews
-// GET /tour/234324sad/reviews/34098reviewid
-
-router
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview,
   );
 
 module.exports = router;
