@@ -21,7 +21,7 @@ const reviewsSchema = new mongoose.Schema(
       ref: 'Tour',
       required: [true, 'Review must belong to a tour'],
     },
-    User: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'Review must belong to a user'],
@@ -58,3 +58,8 @@ reviewsSchema.pre(/^find/, function (next) {
 const Review = mongoose.model('Review', reviewsSchema);
 
 module.exports = Review;
+
+// Nested routes
+// POST /tour/234324sad/reviews
+// GET /tour/234324sad/reviews
+// GET /tour/234324sad/reviews/34098reviewid

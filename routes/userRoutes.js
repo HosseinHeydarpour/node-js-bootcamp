@@ -6,6 +6,8 @@ const userController = require('../controllers/userController');
 
 const authController = require('../controllers/authController');
 
+const reviewController = require('../controllers/reviewController');
+
 router.route('/signup').post(authController.signup);
 router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
