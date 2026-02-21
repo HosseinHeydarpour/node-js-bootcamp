@@ -111,6 +111,13 @@ const toursSchema = new mongoose.Schema(
 
     // guides: Array,
     guides: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+    // This is not a good option instead we use virtual populate
+    // reviews: [
+    //   {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'Review',
+    //   },
+    // ],
   },
   {
     toJSON: {
@@ -125,6 +132,13 @@ const toursSchema = new mongoose.Schema(
 // We cannot do some things like this find tours when duration in week is 1 beacuse it is not in the db
 toursSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
+});
+
+// Virtual populate | we want to only populate reviews when we get one tour
+toursSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // DOCUMENT MIDDLEWARE: runs before the .save() and create() not .insertMany()
