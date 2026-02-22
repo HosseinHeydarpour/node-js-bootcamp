@@ -26,21 +26,32 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   });
 });
 
-//  Create a review
-exports.createReview = catchAsync(async (req, res, next) => {
+// Middleware
+exports.setTourAndUserIds = (req, res, next) => {
   // Allow nested routes
   if (!req.body.tour) req.body.tour = req.params.tourId;
   if (!req.body.user) req.body.user = req.user.id; // We get use id from the protect middleware
 
-  const newReview = await Review.create(req.body);
+  next();
+};
 
-  res.status(201).json({
-    status: 'success',
-    data: {
-      review: newReview,
-    },
-  });
-});
+//  Create a review
+// exports.createReview = catchAsync(async (req, res, next) => {
+//   // // Allow nested routes
+//   // if (!req.body.tour) req.body.tour = req.params.tourId;
+//   // if (!req.body.user) req.body.user = req.user.id; // We get use id from the protect middleware
+
+//   const newReview = await Review.create(req.body);
+
+//   res.status(201).json({
+//     status: 'success',
+//     data: {
+//       review: newReview,
+//     },
+//   });
+// });
+
+exports.createReview = factory.createOne(Review);
 
 exports.getReview = catchAsync(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
@@ -67,5 +78,7 @@ exports.getReview = catchAsync(async (req, res, next) => {
 //     message: 'Review deleted successfully',
 //   });
 // });
+
+exports.updateReview = factory.updateOne(Review);
 
 exports.deleteReview = factory.deleteOne(Review);
