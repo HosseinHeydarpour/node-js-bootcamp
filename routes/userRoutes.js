@@ -13,20 +13,25 @@ router.route('/login').post(authController.login);
 router.route('/forgotPassword').post(authController.forgotPassword);
 router.route('/resetPassword/:token').patch(authController.resetPassword);
 
+// Protect all the routes after this point --> because middlewares run in sequence
+router.use(authController.protect);
+
 router.patch(
   '/updateMyPassword',
-  authController.protect,
+
   authController.updatePassword,
 );
 
 router.get(
   '/me',
-  authController.protect,
+
   userController.getMe,
   userController.getUser,
 );
-router.patch('/updateMe', authController.protect, userController.updateMe);
-router.delete('/deleteMe', authController.protect, userController.deleteMe);
+router.patch('/updateMe', userController.updateMe);
+router.delete('/deleteMe', userController.deleteMe);
+
+router.use(authController.restrictTo('admin'));
 
 router
   .route('/')
