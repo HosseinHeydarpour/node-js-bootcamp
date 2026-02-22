@@ -1,7 +1,7 @@
 const Tour = require('../model/tourModel');
-const APIFeatures = require('../utils/apiFeatures');
+
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+// const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 exports.aliasTopTours = (req, res, next) => {
@@ -11,43 +11,28 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  // EXECUTE QUERY
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFileds()
-    .paginate();
-  const tours = await features.query;
+exports.getAllTours = factory.getAll(Tour);
 
-  // SEND QUERY
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
+// exports.getTour = catchAsync(async (req, res, next) => {
+//   // This populates on only queries
+//   // const tour = await Tour.findById(req.params.id).populate('guides');
+//   // Populate is a fundemental tool in mongoose  - populate might effect performance do not use it in huge applications because it creates two queries
+//   const tour = await Tour.findById(req.params.id).populate('reviews');
 
-exports.getTour = catchAsync(async (req, res, next) => {
-  // This populates on only queries
-  // const tour = await Tour.findById(req.params.id).populate('guides');
-  // Populate is a fundemental tool in mongoose  - populate might effect performance do not use it in huge applications because it creates two queries
-  const tour = await Tour.findById(req.params.id).populate('reviews');
+//   // Tour.findOne({_id: req.params.id}) --> this would work exactly as same sa line above
+//   if (!tour) {
+//     return next(new AppError('No tour found with that ID', 404));
+//   }
 
-  // Tour.findOne({_id: req.params.id}) --> this would work exactly as same sa line above
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tour,
+//     },
+//   });
+// });
 
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
 
 exports.createTour = factory.createOne(Tour);
 // exports.createTour = catchAsync(async (req, res, next) => {

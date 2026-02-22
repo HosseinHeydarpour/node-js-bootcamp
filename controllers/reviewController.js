@@ -1,30 +1,31 @@
 const Review = require('../model/reviewModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const APIFeatures = require('../utils/apiFeatures');
+// const catchAsync = require('../utils/catchAsync');
+// const AppError = require('../utils/appError');
+// const APIFeatures = require('../utils/apiFeatures');
 const factory = require('./handlerFactory');
 
 // Get all the reviews
-exports.getAllReviews = catchAsync(async (req, res, next) => {
-  let filter = {};
-  if (req.params.tourId) filter = { tour: req.params.tourId };
 
-  const features = new APIFeatures(Review.find(filter), req.query)
-    .filter()
-    .sort()
-    .limitFileds()
-    .paginate();
+// exports.getAllReviews = catchAsync(async (req, res, next) => {
+//   let filter = {};
+//   if (req.params.tourId) filter = { tour: req.params.tourId };
 
-  const reviews = await features.query;
+//   const features = new APIFeatures(Review.find(filter), req.query)
+//     .filter()
+//     .sort()
+//     .limitFileds()
+//     .paginate();
 
-  res.status(200).json({
-    status: 'success',
-    results: reviews.length,
-    data: {
-      reviews,
-    },
-  });
-});
+//   const reviews = await features.query;
+
+//   res.status(200).json({
+//     status: 'success',
+//     results: reviews.length,
+//     data: {
+//       reviews,
+//     },
+//   });
+// });
 
 // Middleware
 exports.setTourAndUserIds = (req, res, next) => {
@@ -51,22 +52,20 @@ exports.setTourAndUserIds = (req, res, next) => {
 //   });
 // });
 
-exports.createReview = factory.createOne(Review);
+// exports.getReview = catchAsync(async (req, res, next) => {
+//   const review = await Review.findById(req.params.id);
 
-exports.getReview = catchAsync(async (req, res, next) => {
-  const review = await Review.findById(req.params.id);
+//   if (!review) {
+//     return next(new AppError('No review with this ID was found!', 404));
+//   }
 
-  if (!review) {
-    return next(new AppError('No review with this ID was found!', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      review,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       review,
+//     },
+//   });
+// });
 
 // exports.deleteReview = catchAsync(async (req, res, next) => {
 //   const tour = await Review.findByIdAndDelete(req.params.id);
@@ -79,6 +78,8 @@ exports.getReview = catchAsync(async (req, res, next) => {
 //   });
 // });
 
+exports.getAllReviews = factory.getAll(Review);
+exports.createReview = factory.createOne(Review);
+exports.getReview = factory.getOne(Review);
 exports.updateReview = factory.updateOne(Review);
-
 exports.deleteReview = factory.deleteOne(Review);
