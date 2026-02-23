@@ -39,6 +39,9 @@ const reviewsSchema = new mongoose.Schema(
   },
 );
 
+// This will allow a user reveiw a certain tour only once
+reviewsSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewsSchema.pre(/^find/, function (next) {
   // Populate user and tour this creates 2 queries
   // this.populate({
@@ -113,6 +116,11 @@ reviewsSchema.post(/^findOneAnd/, async function () {
 });
 
 const Review = mongoose.model('Review', reviewsSchema);
+
+// This will tell you exactly why the index might be failing
+Review.on('index', (err) => {
+  if (err) console.error('Index error:', err.message);
+});
 
 module.exports = Review;
 
