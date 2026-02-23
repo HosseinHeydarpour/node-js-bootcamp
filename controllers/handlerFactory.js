@@ -84,6 +84,7 @@ exports.getAll = (Model) =>
       .limitFileds()
       .paginate();
     const docs = await features.query;
+    // const docs = await features.query.explain();
 
     // SEND QUERY
     res.status(200).json({

@@ -128,6 +128,10 @@ const toursSchema = new mongoose.Schema(
     },
   },
 );
+//  1 means acending / -1 stands for descending
+// toursSchema.index({ price: 1 });
+toursSchema.index({ price: 1, ratingsAverage: -1 }); // Compund index
+toursSchema.index({ slug: 1 });
 
 // We cannot do some things like this find tours when duration in week is 1 beacuse it is not in the db
 toursSchema.virtual('durationWeeks').get(function () {
