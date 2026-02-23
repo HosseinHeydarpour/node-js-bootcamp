@@ -58,7 +58,7 @@ reviewsSchema.pre(/^find/, function (next) {
 });
 
 reviewsSchema.statics.calcAverageRatings = async function (tourId) {
-  console.log(tourId);
+  // console.log(tourId);
   const stats = await this.aggregate([
     {
       $match: { tour: tourId },
@@ -72,13 +72,20 @@ reviewsSchema.statics.calcAverageRatings = async function (tourId) {
     },
   ]);
 
-  console.log(stats);
+  // console.log(stats);
 
   // To persist the stats
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: stats[0].nRating,
+      ratingsAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
 reviewsSchema.post('save', function () {
@@ -86,6 +93,23 @@ reviewsSchema.post('save', function () {
 
   // Review.calcAverageRatings(this.tour);
   this.constructor.calcAverageRatings(this.tour);
+});
+
+// findByIdAndUpdate
+// findByIdAndDelete
+
+reviewsSchema.pre(/^findOneAnd/, async function (next) {
+  // Here we do not have access to the document we  are accessing to query by this keyword. in order to get access to the docuemnt we execute the query
+  this.r = await this.findOne();
+
+  console.log(this.r);
+  next();
+});
+
+reviewsSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne(); does not work here because the query already exxecuted
+
+  await this.r.constructor.calcAverageRatings(this.r.tour);
 });
 
 const Review = mongoose.model('Review', reviewsSchema);

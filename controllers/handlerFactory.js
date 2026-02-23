@@ -31,7 +31,7 @@ exports.updateOne = (Model) =>
 
     res.status(200).json({
       status: 'success',
-      message: 'Tour was updated successfully',
+      message: 'Document was updated successfully',
       data: {
         data: doc,
       },
