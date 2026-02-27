@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 
 const morgan = require('morgan');
@@ -30,6 +31,14 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+// Setting server side renderer engine
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// Serving static files
+// app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Put it before all other middleware
 app.use(helmet());
@@ -70,9 +79,6 @@ app.use(
   }),
 );
 
-// Serving static files
-app.use(express.static(`${__dirname}/public`));
-
 // Middleware to add request time and for test
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -83,6 +89,9 @@ app.use((req, res, next) => {
 // =========================
 // **** Route Handlers ****
 // =========================
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
 
 app.use('/api/v1/users', userRouter);
 
