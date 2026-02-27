@@ -1,7 +1,7 @@
 const Tour = require('../model/tourModel');
 
 const catchAsync = require('../utils/catchAsync');
-// const AppError = require('../utils/appError');
+const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
 exports.aliasTopTours = (req, res, next) => {
@@ -12,73 +12,9 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 exports.getAllTours = factory.getAll(Tour);
-
-// exports.getTour = catchAsync(async (req, res, next) => {
-//   // This populates on only queries
-//   // const tour = await Tour.findById(req.params.id).populate('guides');
-//   // Populate is a fundemental tool in mongoose  - populate might effect performance do not use it in huge applications because it creates two queries
-//   const tour = await Tour.findById(req.params.id).populate('reviews');
-
-//   // Tour.findOne({_id: req.params.id}) --> this would work exactly as same sa line above
-//   if (!tour) {
-//     return next(new AppError('No tour found with that ID', 404));
-//   }
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       tour,
-//     },
-//   });
-// });
-
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });
-
 exports.createTour = factory.createOne(Tour);
-// exports.createTour = catchAsync(async (req, res, next) => {
-//   const newTour = await Tour.create(req.body);
-//   res.status(201).json({
-//     status: 'success',
-//     data: {
-//       tour: newTour,
-//     },
-//   });
-// });
-
-// exports.updateTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-//     new: true,
-//     // If we do not set this mongoose will accepts less than 10 or more than 40 char titles
-//     runValidators: true,
-//   });
-
-//   if (!tour) {
-//     return next(new AppError('No tour found with that ID', 404));
-//   }
-
-//   res.status(200).json({
-//     status: 'success',
-//     message: 'Tour was updated successfully',
-//     data: {
-//       tour,
-//     },
-//   });
-// });
-
 exports.updateTour = factory.updateOne(Tour);
-
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndDelete(req.params.id);
-
-//   if (!tour) {
-//     return next(new AppError('No tour found with that ID', 404));
-//   }
-
-//   res.status(204).json({
-//     status: 'success',
-//     message: 'Tour was deleted successfully',
-//   });
-// });
 
 exports.deleteTour = factory.deleteOne(Tour);
 
@@ -163,6 +99,43 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       plan,
+    },
+  });
+});
+
+// /tours-within?distance=234&center=-40,45&unit=mi
+// /tours-within/distance/234/center/45.665071,9.138676/unit/mi this is cleaner
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  const earthRadiusInMiles = 3963.2;
+  const earthRadiusInKilometers = 6378.1;
+  const radius =
+    unit === 'mi'
+      ? distance / earthRadiusInMiles
+      : distance / earthRadiusInKilometers;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        'Please provide latitude and longtitude in the format lng,lat',
+        400,
+      ),
+    );
+  }
+
+  console.log(distance, lat, lng, unit);
+
+  const tours = await Tour.find({
+    //first lng then lat! pay attention
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      data: tours,
     },
   });
 });
