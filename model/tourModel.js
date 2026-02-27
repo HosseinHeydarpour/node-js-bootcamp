@@ -188,10 +188,10 @@ toursSchema.pre(/^find/, function (next) {
 });
 // AGGREGATE MIDDLEWARE
 // Remove secret tour from aggeragate
-toursSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// toursSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 toursSchema.pre(/^find/, function (next) {
   this.populate({

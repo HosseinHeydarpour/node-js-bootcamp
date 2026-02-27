@@ -31,6 +31,8 @@ router
 // /tours-within?distance=234&center=-40,45&unit=mi
 // /tours-within/distance/234/center/-40,45/unit/mi this is cleaner
 
+router.route('/distances/:latlng/unit/:unit').get(tourController.getDistances);
+
 router
   .route('/')
   .get(tourController.getAllTours)
